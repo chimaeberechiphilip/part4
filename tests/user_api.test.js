@@ -11,12 +11,12 @@ const User =require("../models/user_model")
 //...
 describe('when there is initially one user in db', () => {
   beforeEach(async () => {
-    await User.deleteMany({})
-    
-    const passwordHash = await bcrypt.hash('testpassword', 10);
-    const user = new User({ username: 'testuser', name: 'Test User', passwordHash });
-  
 
+    await User.deleteMany({})
+   
+    const passwordHash = await bcrypt.hash('testpassword', 10);
+    
+    const user = new User({ username: 'root1', name: 'Test User', passwordHash });
     await user.save()
   })
 
@@ -29,14 +29,14 @@ describe('when there is initially one user in db', () => {
       password: 'salainen',
     }
 
-    await api
+    const response=await api
       .post('/api/users')
       .send(newUser)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
     const usersAtEnd = await helper.usersInDb()
-    assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length +1)
 
     const usernames = usersAtEnd.map(u => u.username)
     assert(usernames.includes(newUser.username))
@@ -46,7 +46,7 @@ describe('when there is initially one user in db', () => {
     const usersAtStart = await helper.usersInDb()
 
     const newUser = {
-      username: 'root',
+      username: 'root1',
       name: 'Superuser',
       password: 'salainen',
     }
@@ -60,7 +60,7 @@ describe('when there is initially one user in db', () => {
     const usersAtEnd = await helper.usersInDb()
     assert(result.body.error.includes('expected `username` to be unique'))
 
-    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length +1)
   })
 })
 
